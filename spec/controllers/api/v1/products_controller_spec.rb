@@ -11,7 +11,10 @@ describe Api::V1::ProductsController do
       product_response = json_response[:product]
       expect(product_response[:title]).to eql @product.title
     end
-
+    it "has the user as a embeded object" do
+      product_response = json_response[:product]
+      expect(product_response[:user][:email]).to eql @product.user.email
+    end
     it {should respond_with 200 }
   end
 
@@ -20,7 +23,12 @@ describe Api::V1::ProductsController do
       5.times { FactoryGirl.create :product}
       get :index
     end
-
+    it "returns the user object into each product" do
+      product_response = json_response[:products]
+      product_response.each do |pr|
+        expect(pr[:user]).to be_present
+      end
+    end
     it "returns 5 records from the database" do
       product_response = json_response
       expect(product_response[:products].size).to eq(5)
@@ -41,7 +49,6 @@ describe Api::V1::ProductsController do
 
       it "renders the json representation for the product record just created" do
         product_response = json_response[:product]
-        puts product_response
         expect(product_response[:title]).to eql @product_attributes[:title]
       end
 
