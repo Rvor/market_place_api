@@ -98,7 +98,6 @@ describe Api::V1::UsersController do
     end
 
     it "returns the information about a reporter on a hash" do
-      puts json_response
       user_response = json_response[:user] 
       #user_response = json_response
       expect(user_response[:email]).to eql @user.email
