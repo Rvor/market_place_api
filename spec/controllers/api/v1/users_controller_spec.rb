@@ -94,15 +94,20 @@ describe Api::V1::UsersController do
   describe "GET #show" do
     before(:each) do
       @user = FactoryGirl.create :user
-      get :show, id: @user.id, format: :json
+      get :show, id: @user.id #, format: :json
     end
-
+    
+    
     it "returns the information about a reporter on a hash" do
       user_response = json_response[:user] 
-      #user_response = json_response
       expect(user_response[:email]).to eql @user.email
     end
-
+    
+    
+    it "has the product ids as an embeded object" do
+      user_response = json_response[:user]
+      expect(user_response[:product_ids]).to eql []
+    end
     it {should respond_with 200}
   end
 end
