@@ -49,8 +49,6 @@ end
 group :development, :test do
   gem "shoulda-matchers"
   gem "rspec-rails", "~>2.14"
-end
-group :test do
   gem "factory_girl_rails"
   gem "ffaker"
   gem "email_spec"
