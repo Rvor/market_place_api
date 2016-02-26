@@ -5,3 +5,8 @@
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
+require 'ffaker'
+
+user = User.create(email: "nhamtybv@gmail.com", password: "123456789", password_confirmation: "123456789")
+
+10.times { Product.create(title: FFaker::Product.product_name, price: rand()*1000, user_id: user) }

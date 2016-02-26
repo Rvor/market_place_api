@@ -1,7 +1,10 @@
 require 'spec_helper'
 
 describe Api::V1::UsersController do
-  before(:each) { request.headers['Accept'] = "application/vnd.maketplace.v1" }
+  before(:each) do
+    request.headers['Accept'] = "application/vnd.maketplace.v1, #{Mime::JSON}"
+    request.headers['Content-Type'] = Mime::JSON.to_s
+  end
   
   describe "POST #create" do
 
@@ -21,12 +24,12 @@ describe Api::V1::UsersController do
       end
 
       it "renders a error json" do
-        user_response = JSON.parse(response.body, symbolize_names: true)
+        user_response = json_response
         expect(user_response).to have_key(:errors)
       end
 
       it "render the json error on why the user could not created" do
-        user_response = JSON.parse(response.body, symbolize_names: true)
+        user_response = json_response
         expect(user_response[:errors][:email]).to include "can't be blank"
       end
 
@@ -35,6 +38,11 @@ describe Api::V1::UsersController do
   end
   
   describe "PUT/PATCH #update" do
+    before(:each) do
+      @user = FactoryGirl.create :user
+      request.headers['Authorization'] = @user.auth_token
+    end
+
     context "when is successfully updated" do
       before(:each) do
         @user = FactoryGirl.create :user
@@ -42,7 +50,7 @@ describe Api::V1::UsersController do
       end
 
       it "render the json representation for the updated user" do
-        user_response = JSON.parse(response.body, symbolize_names: true)
+        user_response = json_response
         expect(user_response[:email]).to eql "nhamtybv@gmail.com"
       end
 
@@ -56,12 +64,12 @@ describe Api::V1::UsersController do
       end
 
       it "render an error json" do
-        user_response = JSON.parse(response.body, symbolize_names: true)
+        user_response = json_response
         expect(user_response).to have_key(:errors)
       end
 
       it "render the json errors on why the user could not be updated" do
-        user_response = JSON.parse(response.body, symbolize_names: true)
+        user_response = json_response
         expect(user_response[:errors][:email]).to include "is invalid"
       end
 
@@ -72,6 +80,7 @@ describe Api::V1::UsersController do
   describe "DELETE #destroy" do
     before(:each) do
       @user = FactoryGirl.create :user
+      api_authorization_header @user.auth_token
       delete :destroy, {id: @user.id}, format: :json
     end
 
@@ -86,7 +95,8 @@ describe Api::V1::UsersController do
     end
 
     it "returns the information about a reporter on a hash" do
-      user_response = JSON.parse(response.body, symbolize_names: true)
+      user_response = json_response 
+      #user_response = json_response
       expect(user_response[:email]).to eql @user.email
     end
 
