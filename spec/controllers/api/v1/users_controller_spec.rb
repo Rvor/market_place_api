@@ -13,7 +13,10 @@ describe Api::V1::UsersController do
         @user_atttributes = FactoryGirl.attributes_for :user
         post :create, { user: @user_atttributes }, format: :json
       end
-
+      it "renders the json representation for the user record just created" do
+        user_response = json_response[:user]
+        expect(user_response[:email]).to eql @user_atttributes[:email]
+      end
       it {should respond_with 201}
     end
 
@@ -50,7 +53,7 @@ describe Api::V1::UsersController do
       end
 
       it "render the json representation for the updated user" do
-        user_response = json_response
+        user_response = json_response[:user]
         expect(user_response[:email]).to eql "nhamtybv@gmail.com"
       end
 
@@ -95,7 +98,8 @@ describe Api::V1::UsersController do
     end
 
     it "returns the information about a reporter on a hash" do
-      user_response = json_response 
+      puts json_response
+      user_response = json_response[:user] 
       #user_response = json_response
       expect(user_response[:email]).to eql @user.email
     end
